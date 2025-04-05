@@ -10,6 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 from app.main import app
 from app.core.config import settings
 from app.core.database import Base, get_async_session, async_session_maker
+# запись логов
+logger.add("logs/test_logs.log", rotation="1 MB", retention="7 days")
 
 # Настройка тестовой БД
 TEST_DATABASE_URL= settings.TEST_DATABASE_URL
@@ -49,7 +51,6 @@ async def prepare_database():
         await conn.run_sync(Base.metadata.create_all)
         logger.info("Test database prepared")
     yield
-    # временное отключение очистки
     async with test_async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
     await test_async_engine.dispose() # закрываем движок
@@ -62,8 +63,7 @@ async def db_session():
     async with test_async_session_maker() as session:
         yield session
         await session.rollback() # Откатываем изменения после теста
-        # await session.commit() # Сохраняем данные вместо отката
-        # logger.debug("Test session committed")
+        logger.debug("Test session rollback")
     # Закрытие сессии происходит автоматически благодаря async with
 
 
