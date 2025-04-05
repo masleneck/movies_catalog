@@ -1,0 +1,10 @@
+fastapi[all]
+pydantic[all]
+asyncpg
+sqlalchemy[asyncio]
+alembic
+loguru
+black
+pytest
+pytest-asyncio
+httpx
