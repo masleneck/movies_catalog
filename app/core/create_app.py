@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.core.database import check_db_connection
-from app.api.endpoints.movies import router as movies_router
+from app.api.routers import main_router
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -10,10 +10,14 @@ async def lifespan(app: FastAPI):
     yield
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="Movies API", lifespan=lifespan)
+    app = FastAPI(
+        title="Movies API",
+        description='API для фильмов',
+        lifespan=lifespan,
+        )
     
     # Подключаем роутер
-    app.include_router(movies_router, prefix="/api/v1")
+    app.include_router(main_router, prefix="/api/v1")
     
     @app.get("/")
     async def root():
